@@ -8,12 +8,12 @@ from azureml.pipeline.steps import PythonScriptStep, EstimatorStep
 from azureml.train.estimator import Estimator
 from azureml.core.datastore import Datastore
 from azureml.data.data_reference import DataReference
-
 import os
 
 cluster_name = "azuremlcluster"
-#
+
 # Get Azure machine learning workspace
+
 ws = Workspace.get(
     name=os.environ.get("WORKSPACE_NAME"),
     subscription_id=os.environ.get("SUBSCRIPTION_ID"), 
@@ -28,16 +28,21 @@ ws = Workspace.get(
 
 # if creditcard is not registered
 
-datasetname = os.environ.get("TRAININGDATASET")
+datasetname = os.environ.get("DATASETAML")
+filename = os.environ.get("DATASETFILENAME")
+env_name = os.environ.get("ENVNAME")
+modelname = os.environ.get("MODELNAME")
 
-if 'trainingdataset' not in ws.datasets:
+default_ds = ws.get_default_datastore()
+
+if datasetname not in ws.datasets:
     
-    #Set blobdatastore
-    blob_datastore_name='BlobDatastoreIoT'
+    #Set blobdatastore only if it doesn't exists already
+    blob_datastore_name='BlobDatastore'
     account_name=os.getenv("BLOB_ACCOUNTNAME_62", "PUT YOUR STORAGE ACCOUNT NAME HERE") # Storage account name
     container_name=os.getenv("BLOB_CONTAINER_62", "PUT YOUR STORAGE CONTAINER NAME HERE") # Name of Azure blob container
     account_key=os.getenv("BLOB_ACCOUNT_KEY_62", "PUT YOUR STORAGE ACCOUNT KEY HERE") # Storage account key
-    
+    ws.set_default_datastore(blob_datastore_name)
 
     try:
         blob_datastore = Datastore.get(ws, blob_datastore_name)
@@ -50,22 +55,17 @@ if 'trainingdataset' not in ws.datasets:
         container_name=container_name, # Name of Azure blob container
         account_key=account_key) # Storage account key
         print("Registered blob datastore with name: %s" % blob_datastore_name)
-"""
-    blob_data_ref = DataReference(
-        datastore=blob_datastore,
-        data_reference_name="blob_test_data",
-        path_on_datastore="testdata")
-"""
 
-    #Update following line with your training dataset file
-    csv_path = (blob_datastore, '/trainiot.csv')
-    
-
+    print(filename)
+    csvrelative = '/' + filename
+    # Update following line with your training dataset file
+    csv_path = (blob_datastore, csvrelative)
+    #csv_path = (blob_datastore, '/creditcard.csv')
 
     try:
         tab_ds = Dataset.Tabular.from_delimited_files(path=csv_path)
         #Update following line with the dataset name you'll register at AML
-        tab_ds = tab_ds.register(workspace=ws, name='trainiot')
+        tab_ds = tab_ds.register(workspace=ws, name=datasetname)
     except Exception as ex:
         print(ex)
 else:
@@ -73,19 +73,14 @@ else:
 
 
 
-# Retrieve the dataset 
-
-trainds = ws.datasets['datasetname']
-df = trainds.to_pandas_dataframe() 
-
-
+"""
 default_ds = ws.get_default_datastore()
 
 default_ds.upload_files(files=['./config/deploymentconfigaci.json', './config/inferenceconfig.json', './config/myenv.yml'], # Upload the configs
                         target_path='config/', # Put it in a folder path in the datastore
                         overwrite=True, # Replace existing files of the same name
                         show_progress=True)
-
+"""
 
 experiment_folder = './model/scripts'
 
@@ -104,20 +99,22 @@ pipeline_cluster.wait_for_completion(show_output=True)
 
 
 # Create a Python environment for the experiment
-fraud_env = Environment("fraud-pipeline-env")
-fraud_env.python.user_managed_dependencies = False # Let Azure ML manage dependencies
-fraud_env.docker.enabled = True # Use a docker container
+
+model_env = Environment(env_name)
+model_env.python.user_managed_dependencies = False # Let Azure ML manage dependencies
+model_env.docker.enabled = True # Use a docker container
 
 # Create a set of package dependencies
 fraud_packages = CondaDependencies.create(conda_packages=['scikit-learn','pandas'],
                                              pip_packages=['azureml-sdk'])
 
 # Add the dependencies to the environment
-fraud_env.python.conda_dependencies = fraud_packages
+model_env.python.conda_dependencies = fraud_packages
 
 # Register the environment (just in case you want to use it again)
-fraud_env.register(workspace=ws)
-registered_env = Environment.get(ws, 'fraud-pipeline-env')
+model_env.register(workspace=ws)
+
+registered_env = Environment.get(ws, env_name)
 
 # Create a new runconfig object for the pipeline
 pipeline_run_config = RunConfiguration()
@@ -132,7 +129,7 @@ print ("Run configuration created.")
 
 
 # Get the training dataset
-fraud_ds = ws.datasets.get("creditcard")
+train_ds = ws.datasets.get(datasetname)
 
 # Create a PipelineData (temporary Data Reference) for the model folder
 model_folder = PipelineData("model_folder", datastore=ws.get_default_datastore())
@@ -149,7 +146,7 @@ estimator = Estimator(source_directory=experiment_folder,
 train_step = EstimatorStep(name = "Train Model",
                            estimator=estimator,
                            estimator_entry_script_arguments=['--output_folder', model_folder, '--data_dir', data_ref],
-                           inputs=[fraud_ds.as_named_input('fraud_train'), data_ref],
+                           inputs=[train_ds.as_named_input('train_ds'), data_ref],
                            outputs=[model_folder],
                            compute_target = pipeline_cluster,
                            allow_reuse = True)
@@ -158,7 +155,7 @@ train_step = EstimatorStep(name = "Train Model",
 register_step = PythonScriptStep(name = "Register Model",
                                 source_directory = experiment_folder,
                                 script_name = "register.py",
-                                arguments = ['--model_folder', model_folder],
+                                arguments = ['--model_folder', model_folder, '--modelname', modelname],
                                 inputs=[model_folder],
                                 compute_target = pipeline_cluster,
                                 runconfig = pipeline_run_config,
@@ -170,6 +167,14 @@ print("Pipeline steps defined")
 pipeline_steps = [train_step, register_step]
 pipeline = Pipeline(workspace = ws, steps=pipeline_steps)
 print("Pipeline is built.")
+
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+
+#ALTERAR FRAUD-TRAINING-PIPELINE
+
 
 # Create an experiment and run the pipeline
 experiment = Experiment(workspace = ws, name = 'fraud-training-pipeline')

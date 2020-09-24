@@ -23,11 +23,14 @@ data_dir = args.data_dir #.data_dir
 # Get the experiment run context
 run = Run.get_context()
 
-# load the diabetes data (passed as an input dataset)
+# load the data (passed as an input dataset)
 print("Loading Data...")
-fraud = run.input_datasets['fraud_train'].to_pandas_dataframe()
+fraud = run.input_datasets['train_ds'].to_pandas_dataframe()
 
+print(fraud.head())
 
+# ----------------------------------------------------------------------------------------------------------------------------
+# Training Model Logic Above
 
 # Cleaning dataset
 
@@ -67,25 +70,12 @@ auc = roc_auc_score(y_test,y_scores[:,1])
 print('AUC: ' + str(auc))
 run.log('AUC', np.float(auc))
 
+# -------------------------------------------------------------------------------------------------------------------------------------
+
+#PASSAR O NOME DO MODELO AQUI PRA ETAPA DE REGISTRAR
 # Save the trained model
 os.makedirs(output_folder, exist_ok=True)
 output_path = output_folder + "/model.pkl"
 joblib.dump(value=model, filename=output_path)
 
-
-files = ['deploymentconfigaci.json', 'inferenceconfig.json', 'myenv.yml']
-
-
-
-for f in files:
-    with open(data_dir + f, 'r') as file:
-        fs = file.read()
-        joblib.dump(value=fs, filename=output_folder + "/" +f )
-
-
 run.complete()
-
-
-
-
-

@@ -12,9 +12,10 @@ Create a variable library called "iotmodel" in the Pipelines blade with the foll
 
 - RESOURCE_GROUP : "resource group name"
 - WORKSPACE_NAME : "AML workspace name"
-- SUBSCRIPTION_ID : "Azure subscription ID"
-- TRAININGDATASET : "The name of the training dataset"
-
+- DATASETAML : "The name of the training dataset registered at AML (or to be registered)"
+- DATASETFILENAME : "The specific name of the file, e.g 'file.csv' "
+- ENVNAME : "The Environment name for the specific model registered at AML (or to be registered)"
+- MODELNAME : "the name of the model you'll register in AML"
 ### Data and Storage Account
 
 Create a storage account, download the csv in the link below and upload into a new container
@@ -23,9 +24,9 @@ https://storagemlops.blob.core.windows.net/fraud/creditcard.csv?sp=r&st=2020-09-
 
 Take note of the Storage Account name, container name and key
 
-In the file setup.py make sure to use the Storage Account name, container and key in lines 35-37
+In the file setup.py make sure to use the Storage Account name, container and key in lines 42-44
 
-If you already created a datastore (azure ml datastore pointing to a Storage Account or datalake) change line 27
+If you already created a datastore (azure ml datastore pointing to a Storage Account or datalake) uncomment and change line 27
 
 ### Create Connected Services
 
@@ -44,9 +45,9 @@ Head to the pipelines blade and create your first build/training pipeline:
 Click new pipeline and chose Azure Repos Git and Existing Azure Pipelines YAML File
 /pipeline/azure-pipelines.yml
 
-Run the pipeline
+Save the pipeline withouth running.
 
-In order to have the same Variables names that we created on the first step, we need to cancel the run and rename it to "iotmodel"
+In order to have the same Variables names that we created on the first step, we need rename it to "iotmodel" or the name of the variables you're using (if you ran the pipeline it's ok, simply cancel the current build and rename)
 
 
 ### Training and Registering pipeline
