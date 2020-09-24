@@ -8,11 +8,12 @@ Start cloning this repo in the Azure DevOps Repo blade.
 
 > Import Repo https://github.com/LucasCosas/mlops
 
-Create a variable library called "trainmodel" in the Pipelines blade with the following:
+Create a variable library called "iotmodel" in the Pipelines blade with the following:
 
 - RESOURCE_GROUP : "resource group name"
 - WORKSPACE_NAME : "AML workspace name"
 - SUBSCRIPTION_ID : "Azure subscription ID"
+- TRAININGDATASET : "The name of the training dataset"
 
 ### Data and Storage Account
 
@@ -39,9 +40,13 @@ Go to project settings on the left corner and look for Service Connections
 ### Create first Pipeline
 
 Head to the pipelines blade and create your first build/training pipeline:
+
 Click new pipeline and chose Azure Repos Git and Existing Azure Pipelines YAML File
 /pipeline/azure-pipelines.yml
+
 Run the pipeline
+
+In order to have the same Variables names that we created on the first step, we need to cancel the run and rename it to "iotmodel"
 
 
 ### Training and Registering pipeline

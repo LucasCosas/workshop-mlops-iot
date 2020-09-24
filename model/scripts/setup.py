@@ -11,7 +11,7 @@ from azureml.data.data_reference import DataReference
 
 import os
 
-cluster_name = "azuremlscluster"
+cluster_name = "azuremlcluster"
 #
 # Get Azure machine learning workspace
 ws = Workspace.get(
@@ -28,10 +28,12 @@ ws = Workspace.get(
 
 # if creditcard is not registered
 
-if 'creditcard' not in ws.datasets:
+datasetname = os.environ.get("TRAININGDATASET")
+
+if 'trainingdataset' not in ws.datasets:
     
     #Set blobdatastore
-    blob_datastore_name='MyBlobDatastore'
+    blob_datastore_name='BlobDatastoreIoT'
     account_name=os.getenv("BLOB_ACCOUNTNAME_62", "PUT YOUR STORAGE ACCOUNT NAME HERE") # Storage account name
     container_name=os.getenv("BLOB_CONTAINER_62", "PUT YOUR STORAGE CONTAINER NAME HERE") # Name of Azure blob container
     account_key=os.getenv("BLOB_ACCOUNT_KEY_62", "PUT YOUR STORAGE ACCOUNT KEY HERE") # Storage account key
@@ -48,18 +50,22 @@ if 'creditcard' not in ws.datasets:
         container_name=container_name, # Name of Azure blob container
         account_key=account_key) # Storage account key
         print("Registered blob datastore with name: %s" % blob_datastore_name)
-
+"""
     blob_data_ref = DataReference(
         datastore=blob_datastore,
         data_reference_name="blob_test_data",
         path_on_datastore="testdata")
-    csv_path = (blob_datastore, '/creditcard.csv')
+"""
+
+    #Update following line with your training dataset file
+    csv_path = (blob_datastore, '/trainiot.csv')
     
 
 
     try:
         tab_ds = Dataset.Tabular.from_delimited_files(path=csv_path)
-        tab_ds = tab_ds.register(workspace=ws, name='creditcard')
+        #Update following line with the dataset name you'll register at AML
+        tab_ds = tab_ds.register(workspace=ws, name='trainiot')
     except Exception as ex:
         print(ex)
 else:
@@ -67,9 +73,10 @@ else:
 
 
 
+# Retrieve the dataset 
 
-creditds = ws.datasets['creditcard']
-df = creditds.to_pandas_dataframe() 
+trainds = ws.datasets['datasetname']
+df = trainds.to_pandas_dataframe() 
 
 
 default_ds = ws.get_default_datastore()
