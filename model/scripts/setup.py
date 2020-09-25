@@ -32,7 +32,7 @@ datasetname = os.environ.get("DATASETAML")
 filename = os.environ.get("DATASETFILENAME")
 env_name = os.environ.get("ENVNAME")
 modelname = os.environ.get("MODELNAME")
-
+pipelinename = os.environ.get("PIPELINENAME")
 default_ds = ws.get_default_datastore()
 
 if datasetname not in ws.datasets:
@@ -168,24 +168,17 @@ pipeline_steps = [train_step, register_step]
 pipeline = Pipeline(workspace = ws, steps=pipeline_steps)
 print("Pipeline is built.")
 
-# ------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------
-
-#ALTERAR FRAUD-TRAINING-PIPELINE
-
-
 # Create an experiment and run the pipeline
-experiment = Experiment(workspace = ws, name = 'fraud-training-pipeline')
+experiment = Experiment(workspace = ws, name = pipelinename)
 pipeline_run = experiment.submit(pipeline, regenerate_outputs=True)
 print("Pipeline submitted for execution.")
 
 # RunDetails(pipeline_run).show()
 pipeline_run.wait_for_completion()
 
-published_pipeline = pipeline.publish(name="fraud_Training_Pipeline",
-                                      description="Trains fraud model",
+published_pipeline = pipeline.publish(name=pipelinename,
+                                      description="Trains " + modelname + " model",
                                       version="1.0")
 rest_endpoint = published_pipeline.endpoint
+
 print(rest_endpoint)

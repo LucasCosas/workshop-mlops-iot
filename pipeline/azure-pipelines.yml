@@ -2,7 +2,7 @@ trigger:
 - 'master'
 
 variables:
-- group: $(Build.DefinitionName)
+- group: iotvar
 
 pool:
   name: Azure Pipelines
