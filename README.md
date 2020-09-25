@@ -8,7 +8,7 @@ Start cloning this repo in the Azure DevOps Repo blade.
 
 > Import Repo https://github.com/LucasCosas/mlops
 
-Create a variable library called "iotvar" in the Pipelines blade with the following:
+Create a variable library called "iotmodel" in the Pipelines blade with the following:
 
 - RESOURCE_GROUP : "resource group name"
 - WORKSPACE_NAME : "AML workspace name"
@@ -47,7 +47,9 @@ Head to the pipelines blade and create your first build/training pipeline:
 Click new pipeline and chose Azure Repos Git and Existing Azure Pipelines YAML File
 /pipeline/azure-pipelines.yml
 
-Save and run the pipeline
+Save the pipeline without running
+
+Rename the pipeline to "iotmodel". One of the steps of the yml is to use the same variables library as the name of the pipeline, so renaming to "iotmodel" will force the pipeline to use that group of variables during the build/training.
 
 
 ### Training and Registering pipeline

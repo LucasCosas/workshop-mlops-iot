@@ -2,7 +2,7 @@ trigger:
 - 'master'
 
 variables:
-- group: iotvar
+- group: ${{ variables['Build.DefinitionName'] }}
 
 pool:
   name: Azure Pipelines
