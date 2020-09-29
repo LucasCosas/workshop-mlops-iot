@@ -82,23 +82,46 @@ Install the following extension to your organization:
 
 ### Continuos Deployment
 
-Import the json from this repo /pipeline/Deploy Webservice.json
+Go to the Repo's blade and click on Releases. Click new Pipeline and Start with an Empty Job
+Save this Release and go back to the "All Pipelines"
 
-Make sure to chose the default agent pools pointing to ubuntu and an approver to deploy the model to production, after testing the ACI.
+Under "New", import a release pipeline from this repo /pipeline/Deploy Webservice.json
+
+Make sure to chose the Azure Pipelines Agent pools pointing to ubuntu:
+> Click on the blue link at "1 Job, 3 tasks" from QA  - Deploy to ACI
+> Agent Job > Agent Pool > Azure Pipelines and Ubuntu 20.04
+
+For each step of the pipeline, there's a need to change the Azure Resource Manager pointing to the MLOpsServiceConnection
+> Do that for all the steps.
+
+Between QA and PROD there's a Post-Deployment conditions.
+> Click on the link and choose someone to be an approver. This will make sure that the model will only be deployed to production once approved propperly.
 
 In the artifacts blade, you'll need two different artifacts:
 
-Create an Artifact from AzureML Model Artifact type, chosing the Service Endpoint AzureMLServiceConnection and Model named fraud_model (or your own model). Click on the lightning icon on top of the artifact and enable CD trigger
+1st:
 
-Add another artifact for the git repo, specifying the git repo you cloned.
+Create an Artifact from AzureML Model Artifact type, chosing the Service Endpoint AzureMLServiceConnection and Model named iotmodel (o another model you own). Click on the lightning icon on top of the artifact and enable CD trigger
+
+2nd:
+Add another artifact for the Azure Repos, specifying the git repo you cloned.
 
 In the Variables blade of the pipeline, change the values as they fit in your scenario. 
 
-Model_name could be different, if we deploy another model and reuse the pipeline.
+Please note that WORKING_DIR_PROD is your repo artifact created above e.g _REPOSITORY/config/
 
-Resource group is probably different, as well as the AML workspace for both QA and prod.
+> ENDPOINT_NAME_PROD : Name of the endpoint you'll deploy in AML
+> ENDPOINT_NAME_QA : Name of the endpoint you'll deploy in AML
+> MODEL_NAME_QA : The exact name of the model you registered in the first pipeline
+> MODEL_NAME_PROD : The name of the model you'll register for Production (that way we'll have different models and versions, for QA and Prod)
+> RESOURCE_GROUP_PROD : Resource group from Production Workspace (sometimes different than QA)
+> RESOURCE_GROUP_QA : Resource group from AML QA workspace
+> WORKING_DIR_PROD :  _REPO/config/
+> WORKING_DIR_QA :  _REPO/config/
+> WORKSPACE_PROD : PROD AML workspace
+> WORKSPACE_QA : QA AML workspace
 
-Working Directory is the artifact name you created for the git repo and the folder for the config files.
+Last step before running the CD is editing the file /config/score.py. The inference python opens the model and receives new data to make inferences, so we need to change the name of the deployed ML model.
 
 Finally, run the CD 
 
