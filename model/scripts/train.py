@@ -27,7 +27,6 @@ run = Run.get_context()
 print("Loading Data...")
 fraud = run.input_datasets['train_ds'].to_pandas_dataframe()
 
-print(fraud.head())
 
 # ----------------------------------------------------------------------------------------------------------------------------
 # Training Model Logic Above
@@ -37,13 +36,10 @@ print(fraud.head())
 fraud = fraud.dropna(axis=0,how='any')
 
 # Separate features and labels
-X, y = fraud.drop(['Class'],axis=1).values, fraud['Class'].values
+X, y = fraud.drop(['Status'],axis=1).values, fraud['Status'].values
 
 # Split data into training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=42)
-
-print(fraud.head())
-
 
 # Train a decision tree model
 

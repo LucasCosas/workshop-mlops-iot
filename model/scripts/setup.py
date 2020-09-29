@@ -15,35 +15,29 @@ cluster_name = "azuremlcluster"
 # Get Azure machine learning workspace
 
 ws = Workspace.get(
-    name=os.environ.get("WORKSPACE_NAME"),
+    name=os.environ.get("AMLWORKSPACE_NAME"),
     subscription_id=os.environ.get("SUBSCRIPTION_ID"), 
     resource_group=os.environ.get("RESOURCE_GROUP")
 )
 
-# Set default Datastore
+# Get all variables from the pipelines library
 
-# ----> Uncomment the following line if there already is a datastore and name it correctly
-
-# ws.set_default_datastore('workspaceblobstore')
-
-# if creditcard is not registered
-
-datasetname = os.environ.get("DATASETAML")
+datasetname = os.environ.get("AMLDATASET")
 filename = os.environ.get("DATASETFILENAME")
 env_name = os.environ.get("ENVNAME")
 modelname = os.environ.get("MODELNAME")
 pipelinename = os.environ.get("PIPELINENAME")
 default_ds = ws.get_default_datastore()
+account_name = os.environ.get("STORAGENAME")
+container_name = os.environ.get("CONTAINERNAME")
+account_key = os.environ.get("STORAGEKEY")
+blob_datastore_name = os.environ.get("AMLDATASTORE")
+
+# if creditcard is not registered
 
 if datasetname not in ws.datasets:
     
-    #Set blobdatastore only if it doesn't exists already
-    blob_datastore_name='BlobDatastore'
-    account_name=os.getenv("BLOB_ACCOUNTNAME_62", "PUT YOUR STORAGE ACCOUNT NAME HERE") # Storage account name
-    container_name=os.getenv("BLOB_CONTAINER_62", "PUT YOUR STORAGE CONTAINER NAME HERE") # Name of Azure blob container
-    account_key=os.getenv("BLOB_ACCOUNT_KEY_62", "PUT YOUR STORAGE ACCOUNT KEY HERE") # Storage account key
-    ws.set_default_datastore(blob_datastore_name)
-
+    #Set blobdatastore only if it doesn't exists already    
     try:
         blob_datastore = Datastore.get(ws, blob_datastore_name)
         print("Found Blob Datastore with name: %s" % blob_datastore_name)
