@@ -41,7 +41,7 @@ Create a variable library called "iotmodel" in the Pipelines blade with the foll
 - DATASETFILENAME: "The specific name of the file, e.g 'file.csv' "
 - AMLDATASTORE: "The name of the Datastore do be registered in AML, e.g 'BlobDataStore' "
 - ENVNAME: "The Environment name for the specific model registered at AML (or to be registered)"
-- MODELNAME: "the name of the model you'll register in AML"
+- MODELNAME: "the name of the model you'll register in AML e.g 'iot_model' "
 - PIPELINENAME: "Name of the pipeline we'll experiment in AML, e.g 'IoT-Pipeline' "
 - STORAGENAME: "Name of the storage account created previously"
 - CONTAINERNAME: "Name of the container which contains the dataset"
@@ -58,7 +58,7 @@ Go to project settings on the left corner and look for Service Connections
 
 1st:
 
-- Create a new service connection for Azure Resource Manager specifing a manual Service Principal if you already have a Service Principal or an autommatic one if you don't and have permissions to create one. Name it "MLOpsServiceConnection". You can leave the "Resource Group" blank
+- Create a new service connection for Azure Resource Manager, scope level "Subscription" specifing a manual Service Principal if you already have a Service Principal or an autommatic one if you have permissions to create one. Name it "MLOpsServiceConnection". You can leave the "Resource Group" blank or point to your Resource Group that contains the AML.
 
 2nd:
 
@@ -74,7 +74,7 @@ Head to the pipelines blade and create your first build/training pipeline:
 Click new pipeline and chose Azure Repos Git and Existing Azure Pipelines YAML File
 "/pipeline/azure-pipelines.yml"
 
-Save the pipeline without running
+Save the pipeline without running (there's an arrow right beside run, expand the checkbox and save)
 
 Rename the pipeline to "iotmodel". One of the steps of the yml is to use the same variables library as the name of the pipeline, so renaming to "iotmodel" will force the pipeline to use that group of variables during the build/training.
 
@@ -84,12 +84,16 @@ Run the pipeline.
 
 ### Training and Registering pipeline
 
+While the pipeline is running you can continue the steps
+
 The pipeline above did a few things:
 
 Registered a datastore pointing to a BLOB 
 Registered a dataset
 Trained a model
 Registered the model in AML and created an Azure DevOps Artifact
+
+
 
 ### AML Extension
 
@@ -144,7 +148,11 @@ Please note that WORKING_DIR_PROD is your repo artifact created above e.g _REPOS
 > WORKSPACE_PROD : PROD AML workspace
 > WORKSPACE_QA : QA AML workspace
 
-Last step before running the CD is editing the file /config/score.py. The inference python opens the model and receives new data to make inferences, so we need to change the name of the deployed ML model.
+Last step before running the CD is editing the file /config/score.py and /config/scoreprod.py. The inference python opens the model and receives new data to make inferences, so we need to change the name of the deployed ML model.
+
+Go to the Repos blade again, locate the files and edit the line 14 of both files : 
+> model_path = Model.get_model_path(model_name = 'iot_model')
+> Replace the score.py with the MODEL_NAME_QA value and the scoreprod.py with the MODEL_NAME_PROD value
 
 Finally, run the CD 
 

@@ -11,8 +11,8 @@ import joblib
 def init():
     global model
     # Get the path to the deployed model file and load it
-    model_path = Model.get_model_path(model_name = 'fraud_model-production')
-    model_path = model_path
+    model_path = Model.get_model_path(model_name = 'iot_model-production')
+    
     model = joblib.load(model_path)
     
 

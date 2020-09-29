@@ -13,7 +13,7 @@ import os
 
 # Get parameters
 parser = argparse.ArgumentParser()
-parser.add_argument('--output_folder', type=str, dest='output_folder', default="fraud_model", help='output folder')
+parser.add_argument('--output_folder', type=str, dest='output_folder', default="model", help='output folder')
 parser.add_argument('--data_dir', dest='data_dir')
 args = parser.parse_args()
 output_folder = args.output_folder
@@ -25,21 +25,25 @@ run = Run.get_context()
 
 # load the data (passed as an input dataset)
 print("Loading Data...")
-fraud = run.input_datasets['train_ds'].to_pandas_dataframe()
-
 
 # ----------------------------------------------------------------------------------------------------------------------------
-# Training Model Logic Above
+# Training Model Logic Below
+
+# Retrieves the dataset passes by the setup pipeline
+fraud = run.input_datasets['train_ds'].to_pandas_dataframe()
 
 # Cleaning dataset
 
 fraud = fraud.dropna(axis=0,how='any')
 
 # Separate features and labels
-X, y = fraud.drop(['Status'],axis=1).values, fraud['Status'].values
+X, y = fraud.drop(['Class'],axis=1).values, fraud['Class'].values
 
 # Split data into training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=42)
+
+print(fraud.head())
+
 
 # Train a decision tree model
 
@@ -65,7 +69,6 @@ y_scores = model.predict_proba(X_test)
 auc = roc_auc_score(y_test,y_scores[:,1])
 print('AUC: ' + str(auc))
 run.log('AUC', np.float(auc))
-
 # -------------------------------------------------------------------------------------------------------------------------------------
 
 #PASSAR O NOME DO MODELO AQUI PRA ETAPA DE REGISTRAR

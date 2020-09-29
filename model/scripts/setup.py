@@ -17,7 +17,7 @@ cluster_name = "azuremlcluster"
 ws = Workspace.get(
     name=os.environ.get("AMLWORKSPACE_NAME"),
     subscription_id=os.environ.get("SUBSCRIPTION_ID"), 
-    resource_group=os.environ.get("RESOURCE_GROUP")
+    resource_group=os.environ.get("RESOURCE_GROUP"),
 )
 
 # Get all variables from the pipelines library
@@ -33,7 +33,7 @@ container_name = os.environ.get("CONTAINERNAME")
 account_key = os.environ.get("STORAGEKEY")
 blob_datastore_name = os.environ.get("AMLDATASTORE")
 
-# if creditcard is not registered
+# if dataset is not registered
 
 if datasetname not in ws.datasets:
     
@@ -65,17 +65,6 @@ if datasetname not in ws.datasets:
 else:
     print('Dataset already registered.')
 
-
-
-"""
-default_ds = ws.get_default_datastore()
-
-default_ds.upload_files(files=['./config/deploymentconfigaci.json', './config/inferenceconfig.json', './config/myenv.yml'], # Upload the configs
-                        target_path='config/', # Put it in a folder path in the datastore
-                        overwrite=True, # Replace existing files of the same name
-                        show_progress=True)
-"""
-
 experiment_folder = './model/scripts'
 
 # Verify that cluster exists
@@ -99,11 +88,11 @@ model_env.python.user_managed_dependencies = False # Let Azure ML manage depende
 model_env.docker.enabled = True # Use a docker container
 
 # Create a set of package dependencies
-fraud_packages = CondaDependencies.create(conda_packages=['scikit-learn','pandas'],
+packages = CondaDependencies.create(conda_packages=['scikit-learn','pandas'],
                                              pip_packages=['azureml-sdk'])
 
 # Add the dependencies to the environment
-model_env.python.conda_dependencies = fraud_packages
+model_env.python.conda_dependencies = packages
 
 # Register the environment (just in case you want to use it again)
 model_env.register(workspace=ws)
