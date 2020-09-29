@@ -6,7 +6,7 @@ First task is creating a new blank project in Azure DevOps
 
 Start cloning this repo in the Azure DevOps Repo blade.
 
-> Import Repo https://github.com/LucasCosas/mlops
+> Import Repo https://github.com/LucasCosas/workshop-mlops-iot
 
 Create a variable library called "iotmodel" in the Pipelines blade with the following:
 
