@@ -20,12 +20,16 @@ Take note of the Storage Account name, container name and key
 
 Start in DevOps by creating a new blank project in Azure DevOps
 
+Look for the repo's blade:
+
+![repository](images/1repo.JPG)
+
 Start cloning this repo in the Azure DevOps Repo blade.
 
 > Import Repo https://github.com/LucasCosas/workshop-mlops-iot
 
-![repository](images/1repo.JPG)
-
+Next step is creating a library variables to use in our pipelines:
+![variables](images/2variables.JPG)
 
 Create a variable library called "iotmodel" in the Pipelines blade with the following:
 
@@ -48,6 +52,8 @@ Create a variable library called "iotmodel" in the Pipelines blade with the foll
 
 Go to project settings on the left corner and look for Service Connections
 
+![service connections](images/3serviceconnections.JPG)
+
 1st:
 
 - Create a new service connection for Azure Resource Manager specifing a manual Service Principal if you already have a Service Principal or an autommatic one if you don't and have permissions to create one. Name it "MLOpsServiceConnection". You can leave the "Resource Group" blank
@@ -60,12 +66,17 @@ Go to project settings on the left corner and look for Service Connections
 
 Head to the pipelines blade and create your first build/training pipeline:
 
+![pipelines](images/4pipelines.JPG)
+
+
 Click new pipeline and chose Azure Repos Git and Existing Azure Pipelines YAML File
 "/pipeline/azure-pipelines.yml"
 
 Save the pipeline without running
 
 Rename the pipeline to "iotmodel". One of the steps of the yml is to use the same variables library as the name of the pipeline, so renaming to "iotmodel" will force the pipeline to use that group of variables during the build/training.
+
+![pipelines](images/5renamepipeline.JPG)
 
 Run the pipeline.
 
@@ -88,14 +99,21 @@ Install the following extension to your organization:
 Go to the Repo's blade and click on Releases. Click new Pipeline and Start with an Empty Job
 Save this Release and go back to the "All Pipelines"
 
+![release](images/6release.JPG)
+
 Under "New", import a release pipeline from this repo /pipeline/Deploy Webservice.json
 
 Make sure to chose the Azure Pipelines Agent pools pointing to ubuntu:
 > Click on the blue link at "1 Job, 3 tasks" from QA  - Deploy to ACI
 > Agent Job > Agent Pool > Azure Pipelines and Ubuntu 20.04
 
+![agent pool](images/7agentpool.JPG)
+
 For each step of the pipeline, there's a need to change the Azure Resource Manager pointing to the MLOpsServiceConnection
 > Do that for all the steps.
+
+![task service connections](images/8taskconnection.JPG)
+
 
 Between QA and PROD there's a Post-Deployment conditions.
 > Click on the link and choose someone to be an approver. This will make sure that the model will only be deployed to production once approved propperly.
