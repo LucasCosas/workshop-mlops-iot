@@ -13,12 +13,7 @@ model_name = args.modelname
 # Get the experiment run context
 run = Run.get_context()
 
-# load the model
-print("Loading model from " + model_folder)
-model_file = model_folder + "/model.pkl"
-
 # Retrieve Model Name
-
 
 #MODEL_NAME ALTERAR PRO NOME QUE RECEBE DO TRAIN.PY
 Model.register(workspace=run.experiment.workspace,

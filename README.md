@@ -20,6 +20,8 @@ Take note of the Storage Account name, container name and key
 
 Start in DevOps by creating a new blank project in Azure DevOps
 
+https://dev.azure.com
+
 Look for the repo's blade:
 
 ![repository](images/1repo.JPG)
