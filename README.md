@@ -24,6 +24,9 @@ Start cloning this repo in the Azure DevOps Repo blade.
 
 > Import Repo https://github.com/LucasCosas/workshop-mlops-iot
 
+![repository](images\1repo.JPG)
+
+
 Create a variable library called "iotmodel" in the Pipelines blade with the following:
 
 - RESOURCE_GROUP: "resource group name containing the Azure Machine Learning workspace (AML workspace)"
