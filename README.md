@@ -82,11 +82,12 @@ Rename the pipeline to "iotmodel". One of the steps of the yml is to use the sam
 
 Run the pipeline.
 
-### Training and Registering pipeline
-
 While the pipeline is running you can continue the steps
 
-The pipeline above did a few things:
+### Training and Registering pipeline
+
+
+The pipeline above will do a few things:
 
 Registered a datastore pointing to a BLOB 
 Registered a dataset
