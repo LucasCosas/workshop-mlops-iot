@@ -24,29 +24,25 @@ data_dir = args.data_dir #.data_dir
 run = Run.get_context()
 
 # load the data (passed as an input dataset)
-print("Loading Data...")
+print("Loadng Data...")
 
 # ----------------------------------------------------------------------------------------------------------------------------
 # Training Model Logic Below
 
 # Retrieves the dataset passes by the setup pipeline
-fraud = run.input_datasets['train_ds'].to_pandas_dataframe()
 
-# Cleaning dataset
+iot_df = run.input_datasets['train_ds'].to_pandas_dataframe()
 
-fraud = fraud.dropna(axis=0,how='any')
+print(iot_df)
 
 # Separate features and labels
-X, y = fraud.drop(['Class'],axis=1).values, fraud['Class'].values
+X, y = iot_df.drop(['sensor_status', 'sensor_id', 'EventProcessedUtcTime', 'PartitionId', 'EventEnqueuedUtcTime'],axis=1).values, iot_df['sensor_status'].values
 
 # Split data into training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=42)
-
-print(fraud.head())
-
+print(iot_df.head())
 
 # Train a decision tree model
-
 model = RandomForestClassifier(n_estimators=2,random_state=42)
 model.fit(X_train, y_train)
 
@@ -59,20 +55,14 @@ print('Accuracy:', acc)
 run.log('Accuracy', np.float(acc))
 
 #calculate F1-score
-f1score = f1_score(y_test, y_hat)
+f1score = f1_score(y_test, y_hat, average='weighted')
 print('F1-score: ', f1score)
 run.log('F1-score', f1score)
 
 
-# calculate AUC
-y_scores = model.predict_proba(X_test)
-auc = roc_auc_score(y_test,y_scores[:,1])
-print('AUC: ' + str(auc))
-run.log('AUC', np.float(auc))
 # -------------------------------------------------------------------------------------------------------------------------------------
-
-#PASSAR O NOME DO MODELO AQUI PRA ETAPA DE REGISTRAR
 # Save the trained model
+
 os.makedirs(output_folder, exist_ok=True)
 output_path = output_folder + "/model.pkl"
 joblib.dump(value=model, filename=output_path)

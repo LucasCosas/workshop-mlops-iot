@@ -145,7 +145,9 @@ Add another artifact for the Azure Repos, specifying the git repo you cloned.
 
 In the Variables blade of the pipeline, change the values as they fit in your scenario. 
 
-Please note that WORKING_DIR_PROD is your repo artifact created above e.g _REPOSITORY/config/
+Please note:
+   WORKING_DIR_PROD is your repo artifact created above e.g _REPOSITORY/config/
+   ENDPOINT NAME cannot have any special characters
 
 - ENDPOINT_NAME_PROD : Name of the endpoint you'll deploy in AML
 - ENDPOINT_NAME_QA : Name of the endpoint you'll deploy in AML
