@@ -98,7 +98,7 @@ Register the model at AML and create an Azure DevOps Artifact
 Install the following extension to your organization:
 > https://marketplace.visualstudio.com/items?itemName=ms-air-aiagility.vss-services-azureml
 
-### Continuos Deployment
+## Continuos Deployment
 
 Go to the Repo's blade and click on Releases. Click new Pipeline and Start with an Empty Job
 Save this Release (you can save under "\") and go back to the "All Pipelines"
@@ -109,9 +109,15 @@ Under "New", import a release pipeline from this repo /pipeline/Deploy Webservic
 
 > https://github.com/LucasCosas/workshop-mlops-iot/blob/master/pipeline/Deploy%20Webservice.json
 
+### Edit Tasks
+
 Make sure to chose the Azure Pipelines Agent pools pointing to ubuntu:
+
 > Click on the blue link at "1 Job, 3 tasks" from QA  - Deploy to ACI
-> Agent Job > Agent Pool > Azure Pipelines and Ubuntu 20.04
+
+For each:
+
+> Agent Job > Agent Pool > Azure Pipelines and Specification > Ubuntu 20.04
 
 ![agent pool](images/7agentpool.JPG)
 
@@ -124,6 +130,8 @@ For each step of the pipeline, there's a need to change the Azure Resource Manag
 Between QA and PROD there's a Post-Deployment conditions.
 > Click on the link and choose someone to be an approver. This will make sure that the model will only be deployed to production once approved propperly.
 
+### Edit Artifacts
+
 In the artifacts blade, you'll need two different artifacts:
 
 1st:
@@ -132,6 +140,8 @@ Create an Artifact from AzureML Model Artifact type, chosing the Service Endpoin
 
 2nd:
 Add another artifact for the Azure Repos, specifying the git repo you cloned.
+
+### Edit Variables
 
 In the Variables blade of the pipeline, change the values as they fit in your scenario. 
 
@@ -147,6 +157,8 @@ Please note that WORKING_DIR_PROD is your repo artifact created above e.g _REPOS
 > WORKING_DIR_QA :  _REPO/config/
 > WORKSPACE_PROD : PROD AML workspace
 > WORKSPACE_QA : QA AML workspace
+
+### Edit the score.py file in the repository
 
 Last step before running the CD is editing the file /config/score.py and /config/scoreprod.py. The inference python opens the model and receives new data to make inferences, so we need to change the name of the deployed ML model.
 
