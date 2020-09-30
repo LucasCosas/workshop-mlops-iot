@@ -86,15 +86,12 @@ While the pipeline is running you can continue the steps
 
 ### Training and Registering pipeline
 
-
 The pipeline above will do a few things:
 
-Registered a datastore pointing to a BLOB 
-Registered a dataset
-Trained a model
-Registered the model in AML and created an Azure DevOps Artifact
-
-
+Register a datastore pointing to your BLOB 
+Register a dataset
+Train a model
+Register the model at AML and create an Azure DevOps Artifact
 
 ### AML Extension
 
@@ -104,11 +101,13 @@ Install the following extension to your organization:
 ### Continuos Deployment
 
 Go to the Repo's blade and click on Releases. Click new Pipeline and Start with an Empty Job
-Save this Release and go back to the "All Pipelines"
+Save this Release (you can save under "\") and go back to the "All Pipelines"
 
 ![release](images/6release.JPG)
 
 Under "New", import a release pipeline from this repo /pipeline/Deploy Webservice.json
+
+> https://github.com/LucasCosas/workshop-mlops-iot/blob/master/pipeline/Deploy%20Webservice.json
 
 Make sure to chose the Azure Pipelines Agent pools pointing to ubuntu:
 > Click on the blue link at "1 Job, 3 tasks" from QA  - Deploy to ACI
