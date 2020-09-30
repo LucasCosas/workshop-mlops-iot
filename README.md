@@ -147,24 +147,24 @@ In the Variables blade of the pipeline, change the values as they fit in your sc
 
 Please note that WORKING_DIR_PROD is your repo artifact created above e.g _REPOSITORY/config/
 
-> ENDPOINT_NAME_PROD : Name of the endpoint you'll deploy in AML
-> ENDPOINT_NAME_QA : Name of the endpoint you'll deploy in AML
-> MODEL_NAME_QA : The exact name of the model you registered in the first pipeline
-> MODEL_NAME_PROD : The name of the model you'll register for Production (that way we'll have different models and versions, for QA and Prod)
-> RESOURCE_GROUP_PROD : Resource group from Production Workspace (sometimes different than QA)
-> RESOURCE_GROUP_QA : Resource group from AML QA workspace
-> WORKING_DIR_PROD :  _REPO/config/
-> WORKING_DIR_QA :  _REPO/config/
-> WORKSPACE_PROD : PROD AML workspace
-> WORKSPACE_QA : QA AML workspace
+- ENDPOINT_NAME_PROD : Name of the endpoint you'll deploy in AML
+- ENDPOINT_NAME_QA : Name of the endpoint you'll deploy in AML
+- MODEL_NAME_QA : The exact name of the model you registered in the first pipeline
+- MODEL_NAME_PROD : The name of the model you'll register for Production (that way we'll have different models and versions, for QA and Prod)
+- RESOURCE_GROUP_PROD : Resource group from Production Workspace (sometimes different than QA)
+- RESOURCE_GROUP_QA : Resource group from AML QA workspace
+- WORKING_DIR_PROD :  _REPO/config/
+- WORKING_DIR_QA :  _REPO/config/
+- WORKSPACE_PROD : PROD AML workspace
+- WORKSPACE_QA : QA AML workspace
 
 ### Edit the score.py file in the repository
 
 Last step before running the CD is editing the file /config/score.py and /config/scoreprod.py. The inference python opens the model and receives new data to make inferences, so we need to change the name of the deployed ML model.
 
 Go to the Repos blade again, locate the files and edit the line 14 of both files : 
-> model_path = Model.get_model_path(model_name = 'iot_model')
-> Replace the score.py with the MODEL_NAME_QA value and the scoreprod.py with the MODEL_NAME_PROD value
+- model_path = Model.get_model_path(model_name = 'iot_model')
+- Replace the score.py with the MODEL_NAME_QA value and the scoreprod.py with the MODEL_NAME_PROD value
 
 Finally, run the CD 
 
