@@ -12,7 +12,7 @@ Go to portal.azure.com and create the following resources:
 
 Download the csv in the link below and upload into a new container in the previously created Storage Account
 
-https://lcstoragemlops.blob.core.windows.net/dataset/iot.csv?sp=r&st=2020-09-30T17:15:39Z&se=2021-12-16T01:15:39Z&spr=https&sv=2019-12-12&sr=b&sig=wjlr%2B9fff%2BToAz4XwearpEsK9kmh2mz0OM3qCgQaPX0%3D
+https://github.com/LucasCosas/workshop-mlops-iot/blob/master/data/iot.csv
 
 Take note of the Storage Account name, container name and key
 
