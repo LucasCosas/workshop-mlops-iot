@@ -12,7 +12,7 @@ Go to portal.azure.com and create the following resources:
 
 Download the csv in the link below and upload into a new container in the previously created Storage Account
 
-https://github.com/LucasCosas/workshop-mlops-iot/blob/master/data/iot.csv
+https://github.com/LucasCosas/mlops/blob/master/data/iot.csv
 
 Take note of the Storage Account name, container name and key
 
